@@ -11,3 +11,9 @@ Envoyer sur GitHub.bat
 
 # Ancienne version gardee en local
 AER0_ancien.py
+
+# Base SQLite locale (creee par le programme)
+database.db
+
+# Brouillons
+try.py

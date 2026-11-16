@@ -1,10 +1,13 @@
 import os
 
+import data
+
 # Si le fichier n'existe pas ca créé le fichier
 if not os.path.exists("registre.csv"):
     with open("registre.csv", "w") as f:
         f.write("identifiant,temperature,vitesse\n")
 
+data.create_database()  # Le tableau SQL est crée une seul fois.
 
 # Constante
 SEUIL_VALIDE_TEMPERATURE = 80
@@ -53,15 +56,17 @@ machines = []
 # Ca va lire le fichier crée et reprendre chaque données insérés dedans pour ensuite les mettre dans une variable temporaire.
 with open("registre.csv", "r") as f:
     for lignes in f:
-        data = lignes.split(",")
+        colonnes = lignes.split(",")
         # condition pour supprimer l'en tête
-        if data[0] != "identifiant":
+        if colonnes[0] != "identifiant":
             # tu récupères les valeurs et les stockes..
-            identifiant = data[0]
-            temperature = int(data[1])
-            vitesse = int(data[2])
+            identifiant = colonnes[0]
+            temperature = int(colonnes[1])
+            vitesse = int(colonnes[2])
             # tu crées une instance de la classe Machine avec les valeurs récupérées et tu l'ajoutes à la liste machines.
-            machines.append(Machine(identifiant, temperature, vitesse))
+            machine = Machine(identifiant, temperature, vitesse)
+            machines.append(machine)
+            
 
 
 while True:
@@ -141,6 +146,7 @@ while True:
 
             machine = Machine(identifiant, temperature, speed)
             machines.append(machine)
+            data.ajouter_machine(machine)
 
             with open("registre.csv", "a") as f:
                 f.write(
