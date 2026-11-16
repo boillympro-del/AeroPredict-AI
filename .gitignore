@@ -5,3 +5,9 @@ registre.csv
 __pycache__/
 *.pyc
 .venv/
+
+# Raccourci local
+Envoyer sur GitHub.bat
+
+# Ancienne version gardee en local
+AER0_ancien.py
