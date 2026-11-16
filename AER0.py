@@ -5,21 +5,6 @@ if not os.path.exists("registre.csv"):
     with open("registre.csv", "w") as f:
         f.write("identifiant,temperature,vitesse\n")
 
-# Ca va lire le fichier crée et reprendre chaque données insérés dedans pour ensuite les mettre dans une variable temporaire.
-with open("registre.csv", "r") as f:
-    for lignes in f:
-        data = lignes.split(",")
-        # condition pour supprimer l'en tête
-        if data[0] != "identifiant":
-            # ca  prend les lignes crée pour les split et faire un truc propre .
-            identifiant = data[0]
-            temperature = int(data[1])
-            vitesse = int(data[2])
-
-            print(identifiant)
-            print(temperature)
-            print(vitesse)
-
 
 # Constante
 SEUIL_VALIDE_TEMPERATURE = 80
@@ -34,36 +19,14 @@ FULL_CALCUL_SPEED_HIGH = SEUIL_VALIDE_SPEED + MARGE_SPEED
 
 
 class Machine:
-    def __init__(self):
-        self.identifiant = input("User: ")
-        while True:
-            try:
-                self.temperature = int(input("Temperature: "))
-                if (
-                    self.temperature < TEMPERATURE_MIN
-                    or self.temperature > TEMPERATURE_MAX
-                ):
-                    print(
-                        f"Please enter a temperature between {TEMPERATURE_MIN} and {TEMPERATURE_MAX}."
-                    )
-                    continue
-                else:
-                    break
-            except ValueError:
-                print("Invalid input. Please enter a valid number.")
-
-        while True:
-            try:
-                self.speed = int(input("Speed: "))
-                if self.speed < SPEED_MIN or self.speed > SPEED_MAX:
-                    print(f"Please enter a speed between {SPEED_MIN} and {SPEED_MAX}.")
-                    continue
-                else:
-                    break
-            except ValueError:
-                print("Invalid input. Please enter a valid number.")
+    # Permet de créer une machine et récupere les données sans etre redemander a chaque fois.
+    def __init__(self, identifiant, temperature, vitesse):
+        self.identifiant = identifiant
+        self.temperature = temperature
+        self.speed = vitesse
 
     def presentation(self):
+
         print(f"Machine: {self.identifiant}")
         print(f"Temperature: {self.temperature}°C")
         print(f"Speed: {self.speed}tr/min")
@@ -86,6 +49,19 @@ class Machine:
 
 
 machines = []
+
+# Ca va lire le fichier crée et reprendre chaque données insérés dedans pour ensuite les mettre dans une variable temporaire.
+with open("registre.csv", "r") as f:
+    for lignes in f:
+        data = lignes.split(",")
+        # condition pour supprimer l'en tête
+        if data[0] != "identifiant":
+            # tu récupères les valeurs et les stockes..
+            identifiant = data[0]
+            temperature = int(data[1])
+            vitesse = int(data[2])
+            # tu crées une instance de la classe Machine avec les valeurs récupérées et tu l'ajoutes à la liste machines.
+            machines.append(Machine(identifiant, temperature, vitesse))
 
 
 while True:
@@ -125,7 +101,45 @@ while True:
 
         for i in range(nombres):
             print(f"\n---Machine {i + 1}---")
-            machine = Machine()
+
+            while True:
+                try:
+                    identifiant = input("Identifiant: ")
+                    if identifiant == "":
+                        print("Please enter a valid identifiant.")
+                        continue
+                    else:
+                        break
+                except ValueError:
+                    print("Invalid input. Please enter a valid identifiant.")
+
+            while True:
+                try:
+                    temperature = int(input("Temperature: "))
+                    if temperature < TEMPERATURE_MIN or temperature > TEMPERATURE_MAX:
+                        print(
+                            f"Please enter a temperature between {TEMPERATURE_MIN} and {TEMPERATURE_MAX}."
+                        )
+                        continue
+                    else:
+                        break
+                except ValueError:
+                    print("Invalid input. Please enter a valid temperature.")
+
+            while True:
+                try:
+                    speed = int(input("Speed: "))
+                    if speed < SPEED_MIN or speed > SPEED_MAX:
+                        print(
+                            f"Please enter a speed between {SPEED_MIN} and {SPEED_MAX}."
+                        )
+                        continue
+                    else:
+                        break
+                except ValueError:
+                    print("Invalid input. Please enter a valid speed.")
+
+            machine = Machine(identifiant, temperature, speed)
             machines.append(machine)
 
             with open("registre.csv", "a") as f:
@@ -152,14 +166,20 @@ while True:
                 machine.presentation()
 
     elif user == 3:
+        trouver = False
         while True:
             try:
-                user_position = int(input("\nPosition of your machine: "))
-                if 0 <= user_position < len(machines):
-                    machines[user_position].presentation()
-                    break
-                else:
-                    print("\nInvalid position.")
+                print([machine.identifiant for machine in machines])
+                user_position = input("\nID of your machine: #")
+                for machine in machines:
+                    if user_position == machine.identifiant:
+                        machine.presentation()
+                        trouver = True
+                        break
+                if trouver == False:
+                    print("\nInvalid ID.")
+                break
+
             except ValueError:
                 print("Invalid input. Please enter a valid number.")
 

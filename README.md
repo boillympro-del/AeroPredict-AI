@@ -7,9 +7,9 @@ A Python command-line tool to monitor industrial / aeronautic machines: it recor
 ## Features
 
 - ➕ Register one or several machines (ID, temperature, speed) with input validation
-- 💾 Save every machine to `registre.csv` and reload it on startup
+- 💾 Save every machine to `registre.csv` and reload them automatically on startup
 - 📋 List all registered machines
-- 🔍 Search a machine by its position
+- 🔍 Search a machine by its ID
 - ⚠️ Alerts when:
   - temperature is above **80 °C**
   - speed is outside **1500 ± 150 rpm**
@@ -24,8 +24,8 @@ Requires Python 3 – no external libraries.
 
 ## Roadmap
 
-- [ ] Load saved machines from the CSV back into the program
-- [ ] Search a machine by its ID
+- [x] Load saved machines from the CSV back into the program
+- [x] Search a machine by its ID
 - [ ] Edit / delete a machine
 - [ ] Data analysis & predictions (pandas, scikit-learn) – the "AI" part 🤖
 
