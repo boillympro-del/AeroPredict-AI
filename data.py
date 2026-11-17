@@ -8,8 +8,8 @@ def create_database():
     curseur.execute(
         # Crée la table uniquement si elle n'existe pas déjà.
         "CREATE TABLE IF NOT EXISTS machines ("
-        # Définit l'identifiant de la machine comme texte.
-        "identifiant TEXT,"
+        # Définit l'identifiant de la machine comme texte et Définit les ID en double.
+        "identifiant TEXT PRIMARY KEY,"
         # Définit la température de la machine comme nombre entier.
         "temperature INTEGER,"
         # Définit la vitesse de la machine comme nombre entier.
@@ -26,16 +26,23 @@ def ajouter_machine(machine):
     connexion = sqlite3.connect(
         "database.db"
     )  # tu ouvres le cahier. S’il n’existe pas, il est créé
-    curseur = connexion.cursor()  # prends le stylo pour écrire dedans. En base de données, on écrit toujours avec le curseur.
-    curseur.execute(
-        # Choisit les colonnes à remplir.
-        "INSERT INTO machines (identifiant, temperature, vitesse) "
-        # Insère les trois valeurs dans l'ordre des colonnes.
-        "VALUES (?, ?, ?)",  # valeur qui sera remplacée par les valeurs de la machine.
-        (machine.identifiant, machine.temperature, machine.speed),
-    )
-    connexion.commit()  # enregistres
+    curseur = connexion.cursor()
+    # prends le stylo pour écrire dedans. En base de données, on écrit toujours avec le curseur.
+    validation = True
+    try:
+        curseur.execute(
+            "INSERT INTO machines (identifiant, temperature, vitesse) "  # Choisit les colonnes à remplir.
+            # Insère les trois valeurs dans l'ordre des colonnes.
+            "VALUES (?, ?, ?)",
+            (machine.identifiant, machine.temperature, machine.speed),
+        )  # valeur qui sera remplacée par les valeurs de la machine.
+        validation = True
+        connexion.commit()  # enregistres
+    except sqlite3.IntegrityError:
+        validation = False
+
     connexion.close()  # refermes le cahier
+    return validation
 
 
 def afficher_machines():
@@ -49,6 +56,7 @@ def afficher_machines():
     connexion.close()
     return machines_data
 
+
 def supprimer_machine(identifiant):
     connexion = sqlite3.connect("database.db")
     curseur = connexion.cursor()
@@ -56,9 +64,54 @@ def supprimer_machine(identifiant):
     connexion.commit()
     connexion.close()
 
+
 def modifier_machine(identifiant, temperature, vitesse):
     connexion = sqlite3.connect("database.db")
     curseur = connexion.cursor()
-    curseur.execute("UPDATE machines SET temperature = ?, vitesse = ? WHERE identifiant = ?", (temperature, vitesse, identifiant))
+    curseur.execute(
+        "UPDATE machines SET temperature = ?, vitesse = ? WHERE identifiant = ?",
+        (temperature, vitesse, identifiant),
+    )
     connexion.commit()
     connexion.close()
+
+
+def alerte_temperature(temperature):
+    connexion = sqlite3.connect("database.db")
+    curseur = connexion.cursor()
+    curseur.execute("SELECT * FROM MACHINES WHERE temperature> ?", (temperature,))
+    machines_alertes_temperatures = curseur.fetchall()
+    connexion.close()
+    return machines_alertes_temperatures
+
+
+def count_machines():
+    connexion = sqlite3.connect("database.db")
+    curseur = connexion.cursor()
+    curseur.execute("SELECT COUNT (*) FROM MACHINES")
+    machines_total = curseur.fetchall()
+    connexion.close()
+    return machines_total
+def avg_machines():
+    connexion = sqlite3.connect("database.db")
+    curseur = connexion.cursor()
+    curseur.execute("SELECT ROUND(AVG(temperature), 2), ROUND(AVG(vitesse), 2) FROM MACHINES")
+    machines_total = curseur.fetchall()
+    connexion.close()
+    return machines_total
+
+def max_machines():
+    connexion = sqlite3.connect("database.db")
+    curseur = connexion.cursor()
+    curseur.execute("SELECT MAX(temperature), MAX(vitesse) FROM MACHINES")
+    machines_total = curseur.fetchall()
+    connexion.close()
+    return machines_total
+
+def min_machines():
+    connexion = sqlite3.connect("database.db")
+    curseur = connexion.cursor()
+    curseur.execute("SELECT MIN(temperature), MIN(vitesse) FROM MACHINES")
+    machines_total = curseur.fetchall()
+    connexion.close()
+    return machines_total

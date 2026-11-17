@@ -64,7 +64,8 @@ while True:
     4. Alerts
     5. Modify a machine
     6. Delete a machine
-    7. Exit
+    7. Statistics
+    8. Exit
 
     Choose an option:
 
@@ -72,8 +73,8 @@ while True:
     while True:
         try:
             user = int(input("\nYour choice: "))
-            if user < 1 or user > 7:
-                print("Please enter a number between 1 and 7.")
+            if user < 1 or user > 8:
+                print("Please enter a number between 1 and 8.")
                 continue
             else:
                 break
@@ -133,8 +134,14 @@ while True:
                     print("Invalid input. Please enter a valid speed.")
 
             machine = Machine(identifiant, temperature, speed)
-            machines.append(machine)
-            data.ajouter_machine(machine)
+
+            ajout_success = data.ajouter_machine(machine)
+            if ajout_success == True:
+                machines.append(machine)
+
+                print("Successfully")
+            else:
+                print("This ID already exists, machine not added")
 
         for machine in machines:
             print("\n===========================")
@@ -233,7 +240,33 @@ while True:
                 break
         else:
             print("\nInvalid ID.")
-
     elif user == 7:
+        if len(machines) == 0:
+            print("\nNo machines registered yet.")
+        else:
+            total = data.count_machines()[0][0]
+            averages = data.avg_machines()[0]
+            maximums = data.max_machines()[0]
+            minimums = data.min_machines()[0]
+
+            print("\n========== STATISTICS ==========")
+            print(f"Total machines       : {total}")
+            print("--------------------------------")
+            print(f"Average temperature  : {averages[0]} °C")
+            print(f"Average speed        : {averages[1]} tr/min")
+            print("--------------------------------")
+            print(f"Highest temperature  : {maximums[0]} °C")
+            print(f"Highest speed        : {maximums[1]} tr/min")
+            print("--------------------------------")
+            print(f"Lowest temperature   : {minimums[0]} °C")
+            print(f"Lowest speed         : {minimums[1]} tr/min")
+            print("================================")
+
+    elif user == 8:
         print("\nThank you for using AeroPredict AI. Goodbye!")
         break
+
+print(data.count_machines())
+print(data.avg_machines())
+print(data.max_machines())
+print(data.min_machines())

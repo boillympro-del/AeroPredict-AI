@@ -12,6 +12,8 @@ A Python command-line tool to monitor industrial / aeronautic machines: it recor
 - 🔍 Search a machine by its ID
 - ✏️ Modify a machine (new temperature / speed, updated in the database)
 - 🗑️ Delete a machine (removed from the database)
+- 🆔 Unique machine IDs (SQL `PRIMARY KEY`): a duplicate ID is refused
+- 📊 Statistics: total machines, average / highest / lowest temperature and speed (SQL `COUNT`, `AVG`, `MAX`, `MIN`)
 - ⚠️ Alerts when:
   - temperature is above **80 °C**
   - speed is outside **1500 ± 150 rpm**
@@ -27,7 +29,7 @@ Requires Python 3 – no external libraries (`sqlite3` is built into Python).
 ## Files
 
 - `AER0.py` – the main program (menu, machines, alerts)
-- `data.py` – SQL part: create the table, add / show / modify / delete machines
+- `data.py` – SQL part: create the table, add / show / modify / delete machines, statistics
 
 ## Roadmap
 
@@ -36,6 +38,7 @@ Requires Python 3 – no external libraries (`sqlite3` is built into Python).
 - [x] Save machines in a SQLite database
 - [x] Read machines back from the database instead of the CSV
 - [x] Edit / delete a machine
+- [x] Statistics on all machines
 - [ ] Data analysis & predictions (pandas, scikit-learn) – the "AI" part 🤖
 
 ## Versions
@@ -46,6 +49,7 @@ Requires Python 3 – no external libraries (`sqlite3` is built into Python).
 | V1 Py | Reload machines from the CSV + search by ID |
 | V2 Py + V1 SQL | SQLite database: create the table and add machines |
 | V3 Py + V2 SQL | Show / modify / delete machines from the database, new menu options |
+| V4 Py + V3 SQL | Statistics menu (count, average, max, min) + unique machine IDs |
 
 ---
 
