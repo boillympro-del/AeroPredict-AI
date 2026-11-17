@@ -1,11 +1,4 @@
-import os
-
 import data
-
-# Si le fichier n'existe pas ca créé le fichier
-if not os.path.exists("registre.csv"):
-    with open("registre.csv", "w") as f:
-        f.write("identifiant,temperature,vitesse\n")
 
 data.create_database()  # Le tableau SQL est crée une seul fois.
 
@@ -53,20 +46,13 @@ class Machine:
 
 machines = []
 
-# Ca va lire le fichier crée et reprendre chaque données insérés dedans pour ensuite les mettre dans une variable temporaire.
-with open("registre.csv", "r") as f:
-    for lignes in f:
-        colonnes = lignes.split(",")
-        # condition pour supprimer l'en tête
-        if colonnes[0] != "identifiant":
-            # tu récupères les valeurs et les stockes..
-            identifiant = colonnes[0]
-            temperature = int(colonnes[1])
-            vitesse = int(colonnes[2])
-            # tu crées une instance de la classe Machine avec les valeurs récupérées et tu l'ajoutes à la liste machines.
-            machine = Machine(identifiant, temperature, vitesse)
-            machines.append(machine)
-            
+# Lit les machines depuis la base au démarrage et recrée les objets
+for ligne in data.afficher_machines():
+    identifiant = ligne[0]
+    temperature = ligne[1]
+    vitesse = ligne[2]
+    machine = Machine(identifiant, temperature, vitesse)
+    machines.append(machine)
 
 
 while True:
@@ -76,7 +62,9 @@ while True:
     2. Show all machines
     3. Search a machine
     4. Alerts
-    5. Exit
+    5. Modify a machine
+    6. Delete a machine
+    7. Exit
 
     Choose an option:
 
@@ -84,8 +72,8 @@ while True:
     while True:
         try:
             user = int(input("\nYour choice: "))
-            if user < 1 or user > 5:
-                print("Please enter a number between 1 and 5.")
+            if user < 1 or user > 7:
+                print("Please enter a number between 1 and 7.")
                 continue
             else:
                 break
@@ -95,7 +83,7 @@ while True:
     if user == 1:
         while True:
             try:
-                nombres = int(input("\nHow many machines you want to registrer ? "))
+                nombres = int(input("\nHow many machines you want to register ? "))
                 if nombres < 1:
                     print("Please enter a positive number.")
                     continue
@@ -148,16 +136,6 @@ while True:
             machines.append(machine)
             data.ajouter_machine(machine)
 
-            with open("registre.csv", "a") as f:
-                f.write(
-                    machine.identifiant
-                    + ","
-                    + str(machine.temperature)
-                    + ","
-                    + str(machine.speed)
-                    + "\n"
-                )
-
         for machine in machines:
             print("\n===========================")
             machine.presentation()
@@ -190,21 +168,72 @@ while True:
                 print("Invalid input. Please enter a valid number.")
 
     elif user == 4:
-        alerte_finded = False
+        alerte_fined = False
         for machine in machines:
             if (
                 machine.temperature > SEUIL_VALIDE_TEMPERATURE
                 or machine.speed < FULL_CALCUL_SPEED_LOW
                 or machine.speed > FULL_CALCUL_SPEED_HIGH
             ):
-                alerte_finded = True
+                alerte_fined = True
                 print("\n⚠️Urgent Urgent, Alert, Alert, Alert ⚠️")
                 machine.presentation()
                 machine.verification_temperature()
                 machine.verification_speed()
-        if alerte_finded == False:
+        if alerte_fined == False:
             print("\nZero Alert, everything it's good... :)")
 
     elif user == 5:
+        user_position = input("\nID of your machine to modify: #")
+        for machine in machines:
+            if user_position == machine.identifiant:
+                while True:
+                    try:
+                        new_temperature = int(input("New Temperature: "))
+                        if (
+                            new_temperature < TEMPERATURE_MIN
+                            or new_temperature > TEMPERATURE_MAX
+                        ):
+                            print(
+                                f"Please enter a temperature between {TEMPERATURE_MIN} and {TEMPERATURE_MAX}."
+                            )
+                            continue
+                        else:
+                            break
+                    except ValueError:
+                        print("Invalid input. Please enter a valid temperature.")
+
+                while True:
+                    try:
+                        new_speed = int(input("New Speed: "))
+                        if new_speed < SPEED_MIN or new_speed > SPEED_MAX:
+                            print(
+                                f"Please enter a speed between {SPEED_MIN} and {SPEED_MAX}."
+                            )
+                            continue
+                        else:
+                            break
+                    except ValueError:
+                        print("Invalid input. Please enter a valid speed.")
+
+                machine.temperature = new_temperature
+                machine.speed = new_speed
+                data.modifier_machine(machine.identifiant, new_temperature, new_speed)
+                print("\nMachine modified successfully.")
+                break
+        else:
+            print("\nInvalid ID.")
+    elif user == 6:
+        user_position2 = input("\nID of your machine to delete: #")
+        for machine in machines:
+            if user_position2 == machine.identifiant:
+                data.supprimer_machine(user_position2)
+                machines.remove(machine)
+                print("\nMachine deleted successfully.")
+                break
+        else:
+            print("\nInvalid ID.")
+
+    elif user == 7:
         print("\nThank you for using AeroPredict AI. Goodbye!")
         break
