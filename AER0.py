@@ -265,8 +265,3 @@ while True:
     elif user == 8:
         print("\nThank you for using AeroPredict AI. Goodbye!")
         break
-
-print(data.count_machines())
-print(data.avg_machines())
-print(data.max_machines())
-print(data.min_machines())
