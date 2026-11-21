@@ -26,7 +26,7 @@ python AER0.py
 
 Requires Python 3 – no external libraries (`sqlite3` is built into Python).
 
-## REST API (FastAPI) 🆕
+## REST API (FastAPI)
 
 The machines stored in the database are also available through a small web API.
 
@@ -38,6 +38,12 @@ uvicorn api:app --reload
 | Method | Route | What it does |
 |---|---|---|
 | GET | `/machines` | Returns all machines as JSON (`identifiant`, `temperature`, `vitesse`) |
+| POST | `/machines` | Adds a machine (body: `identifiant`, `temperature`, `speed`) – a duplicate ID is refused |
+| PUT | `/machines/{identifiant}` | Modifies a machine's temperature and speed |
+| DELETE | `/machines/{identifiant}` | Deletes a machine |
+| GET | `/stats/` | Statistics: total machines, average / highest / lowest temperature and speed |
+
+Input is validated with Pydantic: temperature must be between **0 and 150 °C** and speed between **0 and 3600 rpm**, otherwise the API answers with an error (422).
 
 Interactive docs (Swagger): http://127.0.0.1:8000/docs
 
@@ -56,7 +62,7 @@ Interactive docs (Swagger): http://127.0.0.1:8000/docs
 - [x] Read machines back from the database instead of the CSV
 - [x] Edit / delete a machine
 - [x] Statistics on all machines
-- [ ] REST API with FastAPI (started: `GET /machines`)
+- [x] REST API with FastAPI (add / list / modify / delete machines + statistics)
 - [ ] Data analysis & predictions (pandas, scikit-learn) – the "AI" part 🤖
 
 ## Versions
@@ -69,6 +75,7 @@ Interactive docs (Swagger): http://127.0.0.1:8000/docs
 | V3 Py + V2 SQL | Show / modify / delete machines from the database, new menu options |
 | V4 Py + V3 SQL | Statistics menu (count, average, max, min) + unique machine IDs |
 | V5 Py + V1 API | First FastAPI route `GET /machines` (`api.py`) + removed test prints |
+| V2 API | Full CRUD API: `POST`, `PUT`, `DELETE /machines` + `GET /stats/`, input validation with Pydantic |
 
 ---
 
