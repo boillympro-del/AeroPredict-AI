@@ -57,13 +57,28 @@ def afficher_machines():
     return machines_data
 
 
+def recuperer_machine(identifiant):
+    connexion = sqlite3.connect("database.db")
+    curseur = connexion.cursor()
+    # Cherche une seule machine grâce à son identifiant.
+    curseur.execute("SELECT * FROM machines WHERE identifiant = ?", (identifiant,))
+    machine = curseur.fetchone()  # None si la machine n'existe pas
+    connexion.close()
+    return machine
+
+
 def supprimer_machine(identifiant):
     connexion = sqlite3.connect("database.db")
     curseur = connexion.cursor()
     curseur.execute("DELETE FROM MACHINES WHERE identifiant = ?", (identifiant,))
+    lignes=curseur.rowcount
     connexion.commit()
-    connexion.close()
-
+    connexion.close()    
+    if lignes > 0: 
+        return True
+    else:
+        return False
+    
 
 def modifier_machine(identifiant, temperature, vitesse):
     connexion = sqlite3.connect("database.db")
@@ -72,8 +87,13 @@ def modifier_machine(identifiant, temperature, vitesse):
         "UPDATE machines SET temperature = ?, vitesse = ? WHERE identifiant = ?",
         (temperature, vitesse, identifiant),
     )
+    lignes2=curseur.rowcount
     connexion.commit()
     connexion.close()
+    if lignes2>0:
+        return True
+    else:
+        return False
 
 
 def alerte_temperature(temperature):
