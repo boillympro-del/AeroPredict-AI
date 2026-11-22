@@ -57,16 +57,6 @@ def afficher_machines():
     return machines_data
 
 
-def recuperer_machine(identifiant):
-    connexion = sqlite3.connect("database.db")
-    curseur = connexion.cursor()
-    # Cherche une seule machine grâce à son identifiant.
-    curseur.execute("SELECT * FROM machines WHERE identifiant = ?", (identifiant,))
-    machine = curseur.fetchone()  # None si la machine n'existe pas
-    connexion.close()
-    return machine
-
-
 def supprimer_machine(identifiant):
     connexion = sqlite3.connect("database.db")
     curseur = connexion.cursor()

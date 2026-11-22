@@ -38,11 +38,9 @@ uvicorn api:app --reload
 | Method | Route | What it does |
 |---|---|---|
 | GET | `/machines` | Returns all machines as JSON (`identifiant`, `temperature`, `vitesse`) |
-| GET | `/machines/{identifiant}` | Returns one machine (404 if it doesn't exist) |
-| POST | `/machines` | Adds a machine (body: `identifiant`, `temperature`, `speed`) – 201 if created, 409 if the ID already exists |
+| POST | `/machines` | Adds a machine (body: `identifiant`, `temperature`, `speed`) – a duplicate ID is refused |
 | PUT | `/machines/{identifiant}` | Modifies a machine's temperature and speed (404 if it doesn't exist) |
 | DELETE | `/machines/{identifiant}` | Deletes a machine (404 if it doesn't exist) |
-| GET | `/alertes?seuil=100` | Machines whose temperature is above the threshold (default 100 °C) |
 | GET | `/stats/` | Statistics: total machines, average / highest / lowest temperature and speed |
 
 Input is validated with Pydantic: temperature must be between **0 and 150 °C** and speed between **0 and 3600 rpm**, otherwise the API answers with an error (422).
@@ -78,7 +76,7 @@ Interactive docs (Swagger): http://127.0.0.1:8000/docs
 | V4 Py + V3 SQL | Statistics menu (count, average, max, min) + unique machine IDs |
 | V5 Py + V1 API | First FastAPI route `GET /machines` (`api.py`) + removed test prints |
 | V2 API | Full CRUD API: `POST`, `PUT`, `DELETE /machines` + `GET /stats/`, input validation with Pydantic |
-| V4 SQL + V3 API | Robust API: `PUT`/`DELETE` return 404 when the machine doesn't exist (`rowcount`), 409 on duplicate ID, new `GET /machines/{identifiant}` and `GET /alertes` |
+| V4 SQL + V3 API | Robust API: `supprimer_machine` / `modifier_machine` return a boolean (`rowcount`), `PUT` / `DELETE` return 404 when the machine doesn't exist |
 
 ---
 

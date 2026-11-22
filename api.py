@@ -31,22 +31,13 @@ def listes_machines():
     return result
 
 
-@app.get("/machines/{identifiant}")  # route qui renvoie une seule machine
-def afficher_machine_api(identifiant: str):
-    m = data.recuperer_machine(identifiant)
-    if m is None:
-        raise HTTPException(status_code=404, detail="Machine not Found !")
-    return {"identifiant": m[0], "temperature": m[1], "vitesse": m[2]}
-
-
-@app.post("/machines", status_code=201)  # Permet d'ajouter les machines hors du terminal
+@app.post("/machines")  # Permet d'ajouter les machines hors du terminal
 def ajouter_machine_api(machine: MachineEntrante):
     ok = data.ajouter_machine(machine)
     if ok == True:
         return {"message": "Machine added successfully"}
     else:
-        # 409 = conflit : l'identifiant existe déjà
-        raise HTTPException(status_code=409, detail="This ID already exists")
+        return {"message": "This ID already exists"}
 
 
 @app.delete("/machines/{identifiant}")
@@ -67,28 +58,22 @@ def modifier_machine_api(identifiant: str, machine: MachineModification):
         return {"message": "Machine modified successfully."}
 
 
-@app.get("/alertes")  # machines trop chaudes, ex : /alertes?seuil=100
-def alertes_api(seuil: int = 100):
-    machines = data.alerte_temperature(seuil)
-    result = []
-    for m in machines:
-        result.append({"identifiant": m[0], "temperature": m[1], "vitesse": m[2]})
-    return result
+    
 
 
 @app.get("/stats/")
 def afficher_stats():
     count = data.count_machines()[0][0]
     avg = data.avg_machines()[0]
-    maximum = data.max_machines()[0]
-    minimum = data.min_machines()[0]
+    max = data.max_machines()[0]
+    min = data.min_machines()[0]
     dictionnaire = {
         "Total Machines": count,
         "Average Temperature": avg[0],
         "Average Speed": avg[1],
-        "Highest temperature": maximum[0],
-        "Highest speed": maximum[1],
-        "Lowest temperature": minimum[0],
-        "Lowest speed": minimum[1],
+        "Highest temperature": max[0],
+        "Highest speed": max[1],
+        "Lowest temperature": min[0],
+        "Lowest speed": min[1],
     }
     return dictionnaire
