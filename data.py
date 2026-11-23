@@ -1,9 +1,13 @@
+import os
 import sqlite3
+
+# La base est toujours à côté de data.py, d'où que le programme soit lancé.
+CHEMIN_DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database.db")
 
 
 # créer
 def create_database():
-    connexion = sqlite3.connect("database.db")
+    connexion = sqlite3.connect(CHEMIN_DB)
     curseur = connexion.cursor()
     curseur.execute(
         # Crée la table uniquement si elle n'existe pas déjà.
@@ -23,9 +27,7 @@ def create_database():
 
 # enregistrer dans la base de données
 def ajouter_machine(machine):
-    connexion = sqlite3.connect(
-        "database.db"
-    )  # tu ouvres le cahier. S’il n’existe pas, il est créé
+    connexion = sqlite3.connect(CHEMIN_DB)  # tu ouvres le cahier. S’il n’existe pas, il est créé
     curseur = connexion.cursor()
     # prends le stylo pour écrire dedans. En base de données, on écrit toujours avec le curseur.
     validation = True
@@ -46,7 +48,7 @@ def ajouter_machine(machine):
 
 
 def afficher_machines():
-    connexion = sqlite3.connect("database.db")
+    connexion = sqlite3.connect(CHEMIN_DB)
     curseur = connexion.cursor()
     # Sélectionne toutes les colonnes de la table « machines ».
     curseur.execute("SELECT * FROM machines")
@@ -58,7 +60,7 @@ def afficher_machines():
 
 
 def supprimer_machine(identifiant):
-    connexion = sqlite3.connect("database.db")
+    connexion = sqlite3.connect(CHEMIN_DB)
     curseur = connexion.cursor()
     curseur.execute("DELETE FROM MACHINES WHERE identifiant = ?", (identifiant,))
     lignes=curseur.rowcount
@@ -71,7 +73,7 @@ def supprimer_machine(identifiant):
     
 
 def modifier_machine(identifiant, temperature, vitesse):
-    connexion = sqlite3.connect("database.db")
+    connexion = sqlite3.connect(CHEMIN_DB)
     curseur = connexion.cursor()
     curseur.execute(
         "UPDATE machines SET temperature = ?, vitesse = ? WHERE identifiant = ?",
@@ -87,7 +89,7 @@ def modifier_machine(identifiant, temperature, vitesse):
 
 
 def alerte_temperature(temperature):
-    connexion = sqlite3.connect("database.db")
+    connexion = sqlite3.connect(CHEMIN_DB)
     curseur = connexion.cursor()
     curseur.execute("SELECT * FROM MACHINES WHERE temperature> ?", (temperature,))
     machines_alertes_temperatures = curseur.fetchall()
@@ -96,7 +98,7 @@ def alerte_temperature(temperature):
 
 
 def count_machines():
-    connexion = sqlite3.connect("database.db")
+    connexion = sqlite3.connect(CHEMIN_DB)
     curseur = connexion.cursor()
     curseur.execute("SELECT COUNT (*) FROM MACHINES")
     machines_total = curseur.fetchall()
@@ -104,7 +106,7 @@ def count_machines():
     return machines_total
 
 def avg_machines():
-    connexion = sqlite3.connect("database.db")
+    connexion = sqlite3.connect(CHEMIN_DB)
     curseur = connexion.cursor()
     curseur.execute("SELECT ROUND(AVG(temperature), 2), ROUND(AVG(vitesse), 2) FROM MACHINES")
     machines_total = curseur.fetchall()
@@ -112,7 +114,7 @@ def avg_machines():
     return machines_total
 
 def max_machines():
-    connexion = sqlite3.connect("database.db")
+    connexion = sqlite3.connect(CHEMIN_DB)
     curseur = connexion.cursor()
     curseur.execute("SELECT MAX(temperature), MAX(vitesse) FROM MACHINES")
     machines_total = curseur.fetchall()
@@ -120,7 +122,7 @@ def max_machines():
     return machines_total
 
 def min_machines():
-    connexion = sqlite3.connect("database.db")
+    connexion = sqlite3.connect(CHEMIN_DB)
     curseur = connexion.cursor()
     curseur.execute("SELECT MIN(temperature), MIN(vitesse) FROM MACHINES")
     machines_total = curseur.fetchall()

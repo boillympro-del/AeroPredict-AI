@@ -77,6 +77,7 @@ Interactive docs (Swagger): http://127.0.0.1:8000/docs
 | V5 Py + V1 API | First FastAPI route `GET /machines` (`api.py`) + removed test prints |
 | V2 API | Full CRUD API: `POST`, `PUT`, `DELETE /machines` + `GET /stats/`, input validation with Pydantic |
 | V4 SQL + V3 API | Robust API: `supprimer_machine` / `modifier_machine` return a boolean (`rowcount`), `PUT` / `DELETE` return 404 when the machine doesn't exist |
+| V5 SQL | The database path is always next to `data.py`, so the program finds its data from any folder |
 
 ---
 
