@@ -2,7 +2,7 @@
 
 > 🚧 **Work in progress** – this project is still under development.
 
-A Python command-line tool to monitor industrial / aeronautic machines: it records each machine's **temperature** and **rotation speed**, saves them to a CSV file, and raises **alerts** when values go outside safe limits.
+A Python command-line tool to monitor industrial / aeronautic machines: it records each machine's **temperature** and **rotation speed** in a **SQLite database**, raises **alerts** when values go outside safe limits, and exposes the data through a **REST API** (FastAPI).
 
 ## Features
 

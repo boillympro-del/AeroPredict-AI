@@ -102,6 +102,7 @@ def count_machines():
     machines_total = curseur.fetchall()
     connexion.close()
     return machines_total
+
 def avg_machines():
     connexion = sqlite3.connect("database.db")
     curseur = connexion.cursor()
